@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from "next/image";
 import Map, {
     Marker,
@@ -16,7 +16,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
-
+import { getDirections } from '@/services/directionsService';
 
 const CustomMarker = ({ color, scale, isEditing }) => {
     return (
@@ -61,12 +61,50 @@ const MapBox = ({
     mapRef,
     handleMapClick,
     interactiveLayerIds,
-    bungalows
+    bungalows,
+    origin,
+    destination,
+    setOrigin,
+    setDestination,
+    routeData,
+    setRouteData
 }) => {
     const [allData, setAllData] = useState(jsonData);
     const router = useRouter();
-    const [origin, setOrigin] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        const fetchRoute = async () => {
+            if (origin && destination) {
+                setIsLoading(true);
+                try {
+                    const profile = 'walking'; // Default profile for directions                                                                                                                                                                 
+                    const directions = await getDirections(origin, destination, profile);
+
+                    console.log('Directions object received in MapBox:', directions);
+
+                    if (directions && directions.routes && directions.routes.length > 0) {
+                        setRouteData(directions.routes[0].geometry); // Update parent's routeData via prop                                                                                                                                       
+                    } else {
+                        setRouteData(null);
+                        console.warn("No route found for the given origin and destination.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching directions:", error);
+                    setRouteData(null);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                // Clear route if origin or destination is missing                                                                                                                                                                               
+                setRouteData(null);
+            }
+        };
+
+        fetchRoute();
+        console.log('Route data mapbox', routeData);
+
+    }, [origin, destination, setRouteData]);
 
     const data = useMemo(() => {
         return allData;
@@ -96,6 +134,8 @@ const MapBox = ({
 
     const [geojsonKey, setGeojsonKey] = useState(1);
 
+
+
     return (
         <div className="flex w-full">
             <div className="flex flex-col w-full min-h-full mt-4">
@@ -123,6 +163,15 @@ const MapBox = ({
                         <NavigationControl position="top-left" />
                         <ScaleControl />
                         <Marker longitude={zoneInformation?.centro_lon || "3.107655"} latitude={zoneInformation?.centro_lat || "42.160927"} color="red" />
+                        {/* Origin Marker */}
+                        {origin && (
+                            <Marker longitude={origin[0]} latitude={origin[1]} color="green" />
+                        )}
+
+                        {/* Destination Marker */}
+                        {destination && (
+                            <Marker longitude={destination[0]} latitude={destination[1]} color="blue" />
+                        )}
                         <Layer {...skyLayer} />
                         {data && (
                             <Source type="geojson" key={geojsonKey} promoteId="id" data={data}>
@@ -689,6 +738,24 @@ const MapBox = ({
                                 </div>))}
                             </Source>
                         )}
+                        {/* Navigation layer*/}
+                        {routeData && (
+                            <Source id="directions-route-source" type="geojson" data={{
+                                type: 'Feature',
+                                geometry: routeData
+                            }} />
+                        )}
+                        {routeData && (
+                            <Layer
+                                id="directions-route-layer"
+                                type="line"
+                                source="directions-route-source"
+                                paint={{
+                                    'line-color': '#007cbf',
+                                    'line-width': 4
+                                }}
+                            />
+                        )}
                     </Map>
                 </div>
             </div>
@@ -713,6 +780,12 @@ MapBox.propTypes = {
     })),
     onNewPOIMarkerAdded: PropTypes.func,
     editingPOIId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    origin: PropTypes.arrayOf(PropTypes.number),
+    destination: PropTypes.arrayOf(PropTypes.number),
+    routeData: PropTypes.object,
+    setOrigin: PropTypes.func,
+    setDestination: PropTypes.func,
+    setRouteData: PropTypes.func,
 };
 
 MapBox.defaultProps = {
@@ -723,6 +796,12 @@ MapBox.defaultProps = {
     availableImages: [],
     jsonClusters: { type: 'FeatureCollection', features: [] },
     zoneId: null,
+    origin: null,
+    destination: null,
+    routeData: null,
+    setOrigin: () => { },
+    setDestination: () => { },
+    setRouteData: () => { },
 };
 
 export default MapBox;

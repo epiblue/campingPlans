@@ -21,7 +21,7 @@ export async function getDirections(origin, destination, profile = 'walking') {
     }
     const data = await response.json();
     console.log('Directions api response data: ', data);
-    return data.routes[0].geometry; // Return the GeoJSON LineString                                                                                                                                                               
+    return data; // Return the GeoJSON LineString                                                                                                                                                               
   } catch (error) {
     console.error("Error fetching directions:", error);
     return null;
