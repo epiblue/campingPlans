@@ -1877,7 +1877,8 @@
             "properties": {
                 "id": "entrance",
                 "center": 1,
-                "zoneId": "camping_las_dunas"
+                "zoneId": "camping_las_dunas",
+                "zoneName": "Camping Las Dunas"
             }
         },
         {

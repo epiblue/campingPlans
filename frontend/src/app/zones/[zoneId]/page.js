@@ -1,21 +1,38 @@
 "use client"
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import NavBar from "@/components/NavBar/NavBar";
 import MapBox from "@/components/MapBox/MapBox";
 import { Spinner } from "@/components/ui/spinner"
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
+import {
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from "@/components/ui/sidebar"
+import { AppSidebar } from '@/components/AppSidebar/AppSidebar';
+
 import { fetchTerrainGeoJson } from '@/services/terrainService';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { handleMapClickLogic } from '@/lib/utils';
-import { comfortSpecificFeatures } from '@/lib/constants';
+import { comfortSpecificFeatures, directionTranslations, directionTranslationPatterns, maneuverIconMap } from '@/lib/constants';
 
 export default function ZonePage({ params }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [zoneId, setZoneId] = useState(null);
+    const [zoneName, setZoneName] = useState(null);
     const [zoneData, setZoneData] = useState(null)
     const [areaVisibility, setAreaVisibility] = useState({
         campingAreas: true,
@@ -73,10 +90,12 @@ export default function ZonePage({ params }) {
                         zoneParkings,
                         zonePlayGrounds,
                         petFriendlyZones,
-                        bungalows
+                        bungalows,
+                        zoneInformation
                     } = await fetchTerrainGeoJson(zoneId);
 
                     setZoneData({
+                        zoneInfo: zoneInformation,
                         jsonData: rawGeoJson,
                         campingAreas: campingAreas,
                         restaurants: zoneRestaurants,
@@ -102,6 +121,7 @@ export default function ZonePage({ params }) {
     }, [zoneId, searchParams]);
 
     console.log('Zone Data', zoneData);
+    console.log('Zone Name', zoneName);
 
     const [selectedFeature, setSelectedFeature] = useState(null); // Added selectedFeature state                                                                                                                                  
     const mapRef = useRef();
@@ -185,7 +205,6 @@ export default function ZonePage({ params }) {
 
     return (
         <main className="relative flex flex-col max-h-full h-full min-h-screen">
-            <NavBar zoneId={zoneId} />
             {loading ? (
                 <div className='absolute -z-1 bg-muted w-full h-full min-h-screen place-content-center place-items-center'>
                     <Spinner className="size-6" />
@@ -194,164 +213,212 @@ export default function ZonePage({ params }) {
             ) : (
                 zoneData &&
                 <div className='flex flex-2 gap-4 mx-auto w-full'>
-                    <div className='flex flex-1'>
-                        <MapBox
-                            zoneId={zoneId}
-                            campingAreas={zoneData.campingAreas}
-                            restaurants={zoneData.restaurants}
-                            wcs={zoneData.wcs}
-                            sportAreas={zoneData.sportAreas}
-                            pools={zoneData.pools}
-                            receptionAreas={zoneData.reception}
-                            parkings={zoneData.parkings}
-                            playgrounds={zoneData.playgrounds}
-                            petFriendlyZones={zoneData.petFriendlyZones}
-                            showCampingAreas={areaVisibility.campingAreas}
-                            showRestaurants={areaVisibility.restaurants}
-                            showWcs={areaVisibility.wcs}
-                            showSportAreas={areaVisibility.sportAreas}
-                            showPools={areaVisibility.pools}
-                            showReceptionAreas={areaVisibility.receptionAreas}
-                            showParkings={areaVisibility.parkings}
-                            showPlaygrounds={areaVisibility.playgrounds}
-                            showPetFriendlyZones={areaVisibility.petFriendlyZones}
-                            showTitles={areaVisibility.showTitles}
-                            mapRef={mapRef}
-                            handleMapClick={handleMapClick}
-                            interactiveLayerIds={interactiveLayerIds}
-                            bungalows={zoneData.bungalows}
-                            origin={originCoords} // Pass origin state to MapBox                                                                                                                                                                 
-                            destination={destinationCoords} // Pass destination state to MapBox                                                                                                                                                  
-                            setOrigin={setOriginCoords} // Pass parent's setter to MapBox                                                                                                                                                        
-                            setDestination={setDestinationCoords} // Pass parent's setter to MapBox                                                                                                                                              
-                            routeData={routeData} // Pass routeData to MapBox                                                                                                                                                                    
-                            setRouteData={setRouteData} // Pass setRouteData to MapBox so it can clear it  
-                        />
-                    </div>
-                    <div className='flex flex-col flex-1 mr-4'>
-                        {zoneData.zoneInformation &&
-                            <div className='text-left bg-gray-100 border-2 shadow-2xs p-2 rounded-sm'>
-                                <p className='flex p-2 border-b-2'>
-                                    <span className='flex-1'>Nº catastro </span>
-                                    <span>{zoneData.zoneInformation.catastro}</span>
-                                </p>
-                                <p className='flex p-2'>
-                                    <span className='flex-1'>Area </span>
-                                    <span>{zoneData.zoneInformation.total_area_ha.toFixed(3)} ha</span>
-                                </p>
-                            </div>
-                        }
-                        Control layer
-                        <h2 className="text-lg font-semibold mt-4 mb-2">Control de Capas</h2>
-                        <div className="gap-2 grid grid-cols-3">
-                            {[
-                                { key: 'campingAreas', icon: 'camping', label: 'Áreas de Camping' },
-                                { key: 'restaurants', icon: 'restaurant', label: 'Restaurantes' },
-                                { key: 'wcs', icon: 'wc', label: 'Baños (WCs)' },
-                                { key: 'sportAreas', icon: 'sport', label: 'Áreas Deportivas' },
-                                { key: 'pools', icon: 'pool', label: 'Piscinas' },
-                                { key: 'receptionAreas', icon: 'reception', label: 'Áreas de Recepción' },
-                                { key: 'parkings', icon: 'parking', label: 'Parkings' },
-                                { key: 'playgrounds', icon: 'kids', label: 'Áreas de Juego' },
-                                { key: 'petFriendlyZones', icon: 'pet_friendly', label: 'Zonas Pet Friendly' },
-                            ].map((area) => (
-                                <div key={area.key} className={areaVisibility[area.key] ? 'bg-gray-300 p-4 rounded-md' : 'bg-gray-100 p-4 rounded-md'}>
-                                    <label htmlFor={`switch-${area.key}`} className="flex items-center justify-between cursor-pointer">
-                                        <div className='flex items-center gap-4'>
-                                            <Image // Replaced img with Image component
-                                                src={`/icons/${area.icon}.svg`}
-                                                alt={area.label}
-                                                className="size-4 invert"
-                                                width={16} // Added required width prop
-                                                height={16} // Added required height prop
-                                            />
-                                            <span>{area.label}</span>
+                    <SidebarProvider>
+                        <AppSidebar>
+                            <div className='flex flex-col flex-1 p-4'>
+                                <h2 className="text-lg font-semibold mb-4 pb-2 border-b-2">Control de Capas</h2>
+                                <div className="gap-2 grid grid-cols-2">
+                                    {[
+                                        { key: 'campingAreas', icon: 'camping', label: 'Áreas de Camping' },
+                                        { key: 'restaurants', icon: 'restaurant', label: 'Restaurantes' },
+                                        { key: 'wcs', icon: 'wc', label: 'Baños (WCs)' },
+                                        { key: 'sportAreas', icon: 'sport', label: 'Áreas Deportivas' },
+                                        { key: 'pools', icon: 'pool', label: 'Piscinas' },
+                                        { key: 'receptionAreas', icon: 'reception', label: 'Áreas de Recepción' },
+                                        { key: 'parkings', icon: 'parking', label: 'Parkings' },
+                                        { key: 'playgrounds', icon: 'kids', label: 'Áreas de Juego' },
+                                        { key: 'petFriendlyZones', icon: 'pet_friendly', label: 'Zonas Pet Friendly' },
+                                    ].map((area) => (
+                                        <div key={area.key} className={areaVisibility[area.key] ? 'bg-gray-300 p-4 rounded-md' : 'bg-gray-100 p-4 rounded-md'}>
+                                            <label htmlFor={`switch-${area.key}`} className="flex items-center justify-between cursor-pointer">
+                                                <div className='flex items-center gap-4'>
+                                                    <Image // Replaced img with Image component
+                                                        src={`/icons/${area.icon}.svg`}
+                                                        alt={area.label}
+                                                        className="size-4 invert"
+                                                        width={16} // Added required width prop
+                                                        height={16} // Added required height prop
+                                                    />
+                                                    <span>{area.label}</span>
+                                                </div>
+                                                <Switch
+                                                    id={`switch-${area.key}`}
+                                                    checked={areaVisibility[area.key]}
+                                                    onCheckedChange={() => toggleAreaVisibility(area.key)}
+                                                />
+                                            </label>
                                         </div>
-                                        <Switch
-                                            id={`switch-${area.key}`}
-                                            checked={areaVisibility[area.key]}
-                                            onCheckedChange={() => toggleAreaVisibility(area.key)}
-                                        />
-                                    </label>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                        <h2 className="text-lg font-semibold mt-4 mb-2">Control de visualización</h2>
-                        <div className="gap-2 grid grid-cols-3">
-                            {[
-                                { key: 'showTitles', label: 'Monstrar titulos' },
-                            ].map((area) => (
-                                <div key={area.key} className={areaVisibility[area.key] ? 'bg-gray-300 p-4 rounded-md' : 'bg-gray-100 p-4 rounded-md'}>
-                                    <label htmlFor={`switch-${area.key}`} className="flex items-center justify-between cursor-pointer">
-                                        <span>{area.label}</span>
-                                        <Switch
-                                            id={`switch-${area.key}`}
-                                            checked={areaVisibility[area.key]}
-                                            onCheckedChange={() => toggleAreaVisibility(area.key)}
-                                        />
-                                    </label>
+                                <h2 className="text-lg font-semibold mt-4 mb-2">Control de visualización</h2>
+                                <div className="gap-2 grid grid-cols-2">
+                                    {[
+                                        { key: 'showTitles', label: 'Monstrar titulos' },
+                                    ].map((area) => (
+                                        <div key={area.key} className={areaVisibility[area.key] ? 'bg-gray-300 p-4 rounded-md' : 'bg-gray-100 p-4 rounded-md'}>
+                                            <label htmlFor={`switch-${area.key}`} className="flex items-center justify-between cursor-pointer">
+                                                <span>{area.label}</span>
+                                                <Switch
+                                                    id={`switch-${area.key}`}
+                                                    checked={areaVisibility[area.key]}
+                                                    onCheckedChange={() => toggleAreaVisibility(area.key)}
+                                                />
+                                            </label>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                        <div>
-                            {selectedFeature ? <>
-                                <h2 className="text-lg font-semibold mt-4 mb-2">Información del área</h2>
-                                <div className={`border-2 rounded-md p-3 relative ${selectedFeature.comfort ? `${selectedFeature.comfort} text-white` : ''}`}>
-                                    <span className="text-lg font-semibold">{selectedFeature.title}</span>
-                                    <p className='pt-2'>Si quieres disfrutar tus vacaciones al aire libre, sin prescindir de las comodidades de casa. Los bungalows de Camping Las Dunas te ofrecen lo mejor de los dos mundos</p>
-                                    {selectedFeature.comfort && <span className='float-right absolute top-0 right-0 p-3 uppercase font-bold text-3xl'>{selectedFeature.comfort}</span>}
-                                    {selectedFeature.comfort && comfortSpecificFeatures[selectedFeature.comfort] && (
-                                        <div className='mt-4'>
-                                            <h3 className="text-md text-gray-200 font-semibold mb-4 border-b pb-2">Características</h3>
-                                            <ul className="grid grid-cols-2 gap-2">
-                                                {comfortSpecificFeatures[selectedFeature.comfort].map((feature, index) => (
-                                                    <li key={index} className="flex items-center gap-2">
-                                                        <Image
-                                                            src={`/icons/${feature.icon}.svg`}
-                                                            alt={feature.label}
-                                                            className="invert opacity-25"
-                                                            width={32}
-                                                            height={32}
-                                                        />
-                                                        <span>{feature.label}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                <h2 className="text-lg font-semibold mt-4 mb-2">Rutas y Navegación</h2>
+                                <div className="flex gap-2 mb-4 flex-col">
+                                    <div>
+                                        {originCoords && <span className="p-2 border rounded">Origen: {originCoords[0].toFixed(3)}, {originCoords[1].toFixed(3)}</span>}
+                                        {destinationCoords && <span className="p-2 border rounded">Destino: {destinationCoords[0].toFixed(3)}, {destinationCoords[1].toFixed(3)}</span>}
+                                    </div>
+                                    {routeData && (
+                                        <div className='mt-4 p-3 border rounded-md bg-green-50'>
+                                            <h3 className="text-md font-semibold mb-2">Indicaciones</h3>
+                                            <p>Distancia: <b>{(routeData.distance / 1000).toFixed(2)} km</b></p>
+                                            <p>Duración: <b>{(routeData.duration / 60).toFixed(0)} minutos</b></p>
+                                            {routeData.legs && routeData.legs.length > 0 && (
+                                                <div className="mt-2">
+                                                    <h4 className="font-semibold">Pasos:</h4>
+                                                    <ul className="list-disc list-inside">
+                                                        {routeData.legs[0].steps.map((step, index) => {
+                                                            let translatedInstruction = step.maneuver.instruction;
+
+                                                            // 1. Try to match against dynamic patterns first                                                                                                                                   
+                                                            for (const patternEntry of directionTranslationPatterns) {
+                                                                const match = step.maneuver.instruction.match(patternEntry.pattern);
+                                                                if (match) {
+                                                                    // Replace $1, $2, etc., with captured groups                                                                                                                               
+                                                                    translatedInstruction = patternEntry.translation.replace(/\$(\d+)/g, (m, num) => {
+                                                                        return directionTranslations[match[parseInt(num)]] || match[parseInt(num)];
+                                                                    });
+                                                                    break; // Found a pattern match, stop checking other patterns                                                                                                               
+                                                                }
+                                                            }
+
+                                                            // 2. If no pattern match, try exact lookup                                                                                                                                         
+                                                            if (translatedInstruction === step.maneuver.instruction) {
+                                                                translatedInstruction = directionTranslations[step.maneuver.instruction] || step.maneuver.instruction;
+                                                            }
+
+                                                            return (
+                                                                <li key={index} className="text-sm p-2 border-b list-none">
+                                                                    {['arrive', 'depart'].includes(step.maneuver.type)
+                                                                        ? <Image src={`/icons/${maneuverIconMap[step.maneuver.type] || maneuverIconMap.default}.svg`} alt={step.maneuver.type} width={16} height={16} className="invert inline-block mr-2 align-middle" />
+                                                                        : <Image src={`/icons/${maneuverIconMap[step.maneuver.modifier] || maneuverIconMap.default}.svg`} alt={step.maneuver.modifier} width={16} height={16} className="invert inline-block mr-2 align-middle" />
+                                                                    }
+                                                                    <b>{translatedInstruction}</b>
+                                                                    {step.distance > 0 && ` (${(step.distance / 1000).toFixed(2)} km)`}
+                                                                    {step.duration > 0 && ` (${(step.duration / 60).toFixed(0)} min)`}
+                                                                </li>
+                                                            )
+                                                        })}
+                                                    </ul>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
-                                </div></> :
-                                <div className='rounded-md bg-green-100 p-3 my-4'>Selecione área en la mapa para obtener información</div>
-
-                            }
-                        </div>
-                        <h2 className="text-lg font-semibold mt-4 mb-2">Rutas y Navegación</h2>
-                        <div className="flex gap-2 mb-4">
-                            {!isSelectingWaypoints ? (
-                                <Button onClick={handlePlanRouteStart} className="flex-1">
-                                    Planear Ruta
-                                </Button>
-                            ) : (
-                                <Button onClick={handleClearRoute} variant="destructive" className="flex-1">
-                                    Cancelar Ruta
-                                </Button>
-                            )}
-                            {originCoords && <span className="p-2 border rounded">Origen: {originCoords[0].toFixed(3)}, {originCoords[1].toFixed(3)}</span>}
-                            {destinationCoords && <span className="p-2 border rounded">Destino: {destinationCoords[0].toFixed(3)}, {destinationCoords[1].toFixed(3)}</span>}
-                        </div>
-                        {isSelectingWaypoints && !originCoords && (
-                            <div className='rounded-md bg-blue-100 p-3 my-2'>
-                                Haz click en el mapa para seleccionar el **origen**.
+                                    {!isSelectingWaypoints ? (
+                                        <Button onClick={handlePlanRouteStart} className="flex-1">
+                                            Planear Ruta
+                                        </Button>
+                                    ) : (
+                                        <Button onClick={handleClearRoute} variant="destructive" className="flex-1">
+                                            Cancelar Ruta
+                                        </Button>
+                                    )}
+                                </div>
+                                {isSelectingWaypoints && !originCoords && (
+                                    <div className='rounded-md bg-blue-100 p-3 my-2'>
+                                        Haz click en el mapa para seleccionar el **origen**.
+                                    </div>
+                                )}
+                                {isSelectingWaypoints && originCoords && !destinationCoords && (
+                                    <div className='rounded-md bg-blue-100 p-3 my-2'>
+                                        Haz click en el mapa para seleccionar el **destino**.
+                                    </div>
+                                )}
                             </div>
-                        )}
-                        {isSelectingWaypoints && originCoords && !destinationCoords && (
-                            <div className='rounded-md bg-blue-100 p-3 my-2'>
-                                Haz click en el mapa para seleccionar el **destino**.
+                        </AppSidebar>
+                        <SidebarInset>
+                            <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
+                                <SidebarTrigger className="-ml-1" />
+                                <span>Visualización de <b>{zoneData.zoneInfo.name}</b></span>
+                            </header>
+                            <div className="flex flex-1 flex-col relative">
+                                <MapBox
+                                    zoneId={zoneId}
+                                    campingAreas={zoneData.campingAreas}
+                                    restaurants={zoneData.restaurants}
+                                    wcs={zoneData.wcs}
+                                    sportAreas={zoneData.sportAreas}
+                                    pools={zoneData.pools}
+                                    receptionAreas={zoneData.reception}
+                                    parkings={zoneData.parkings}
+                                    playgrounds={zoneData.playgrounds}
+                                    petFriendlyZones={zoneData.petFriendlyZones}
+                                    showCampingAreas={areaVisibility.campingAreas}
+                                    showRestaurants={areaVisibility.restaurants}
+                                    showWcs={areaVisibility.wcs}
+                                    showSportAreas={areaVisibility.sportAreas}
+                                    showPools={areaVisibility.pools}
+                                    showReceptionAreas={areaVisibility.receptionAreas}
+                                    showParkings={areaVisibility.parkings}
+                                    showPlaygrounds={areaVisibility.playgrounds}
+                                    showPetFriendlyZones={areaVisibility.petFriendlyZones}
+                                    showTitles={areaVisibility.showTitles}
+                                    mapRef={mapRef}
+                                    handleMapClick={handleMapClick}
+                                    interactiveLayerIds={interactiveLayerIds}
+                                    bungalows={zoneData.bungalows}
+                                    origin={originCoords} // Pass origin state to MapBox                                                                                                                                                                 
+                                    destination={destinationCoords} // Pass destination state to MapBox                                                                                                                                                  
+                                    setOrigin={setOriginCoords} // Pass parent's setter to MapBox                                                                                                                                                        
+                                    setDestination={setDestinationCoords} // Pass parent's setter to MapBox                                                                                                                                              
+                                    routeData={routeData} // Pass routeData to MapBox                                                                                                                                                                    
+                                    setRouteData={setRouteData} // Pass setRouteData to MapBox so it can clear it  
+                                />
+                                <div className={`absolute inset-x-0 bottom-0 bg-white shadow-lg transition-transform duration-300 ease-out                                                                                                   
+                                                  ${selectedFeature ? 'translate-y-0' : 'translate-y-full'}                                                                                                                                      
+                                                  max-h-[50vh] overflow-y-auto border-t-2 border-gray-200`}>
+                                    {selectedFeature ? (
+                                        <div className={`relative px-4 pb-16 z-50`}>
+                                            <div className='flex flex-col relative'>
+                                                <h3 className={`text-lg font-semibold mb-2 p-4 rounded-md mt-2 ${selectedFeature.comfort} ${selectedFeature.comfort && 'text-white'}`}>{selectedFeature.title}</h3>
+                                                {comfortSpecificFeatures[selectedFeature.comfort] && <p className="text-gray-700">Información detallada del área seleccionada...</p>}
+                                                <Button onClick={() => setSelectedFeature(null)} className="mt-4 absolute right-2 top-1">Cerrar</Button>
+                                            </div>
+                                            {selectedFeature.comfort && (
+                                                <div className={`mt-4`}>
+                                                    <h4 className="text-md text-gray-500 font-semibold mb-2">Características</h4>
+                                                    <ul className="grid grid-cols-2 gap-2">
+                                                        {comfortSpecificFeatures[selectedFeature.comfort]?.map((feature, index) => (
+                                                            <li key={index} className="flex items-center gap-2">
+                                                                <Image
+                                                                    src={`/icons/${feature.icon}.svg`}
+                                                                    alt={feature.label}
+                                                                    className="invert opacity-25"
+                                                                    width={24}
+                                                                    height={24}
+                                                                />
+                                                                <span>{feature.label}</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-500">Selecciona un área en el mapa para ver la información.</p>
+                                    )}
+                                </div>
                             </div>
-                        )}
-                    </div>
+                        </SidebarInset>
+                    </SidebarProvider>
                 </div>
             )
             }
         </main >
     );
-}
+} 

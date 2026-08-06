@@ -56,7 +56,7 @@ export function handleMapClickLogic(e, mapRef, selectedFeature, setSelectedFeatu
 
     // If there was a previously selected feature, reset its state                                                                                                                                                                               
     if (selectedFeature && mapRef.current) {
-      mapRef.current.setFeatureState(
+      mapRef?.current.setFeatureState(
         { source: selectedFeature.source, id: selectedFeature.id },
         { selected: false }
       );

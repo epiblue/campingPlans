@@ -95,6 +95,7 @@ export async function fetchTerrainGeoJson(registryCode, dataType = 'processed') 
                 zoneInformation = {
                     zone: mainZoneProperties.zoneId,
                     id: mainZoneProperties.id,
+                    name: mainZoneProperties.zoneName,
                     center_lon: mainZone[0].geometry.coordinates[0],
                     center_lat: mainZone[0].geometry.coordinates[1]
                 };

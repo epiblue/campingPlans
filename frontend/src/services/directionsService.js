@@ -11,7 +11,7 @@ export async function getDirections(origin, destination, profile = 'walking') {
   }
 
   const query = `${origin[0]},${origin[1]};${destination[0]},${destination[1]}`;
-  const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${query}?geometries=geojson&access_token=${accessToken}`;
+  const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${query}?geometries=geojson&steps=true&language=es&access_token=${accessToken}`;
 
   try {
     const response = await fetch(url);
@@ -21,7 +21,7 @@ export async function getDirections(origin, destination, profile = 'walking') {
     }
     const data = await response.json();
     console.log('Directions api response data: ', data);
-    return data; // Return the GeoJSON LineString                                                                                                                                                               
+    return data;
   } catch (error) {
     console.error("Error fetching directions:", error);
     return null;
