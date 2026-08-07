@@ -1,63 +1,73 @@
-# Optimizador de Zonas de Terreno
+# Navegador de Mapas de Campings
+
+Este proyecto es una aplicación diseñada para mostrar planos detallados de áreas de camping, ofreciendo diversas funcionalidades como navegación, información de zonas y direcciones paso a paso.
+
+## Tabla de Contenidos
+
+- [Objetivo del Proyecto](#objetivo-del-proyecto)
+- [Pila Tecnológica](#pila-tecnológica)
+- [Características Principales](#características-principales)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Primeros Pasos](#primeros-pasos)
+  - [Prerrequisitos](#prerrequisitos)
+  - [Instalación](#instalación)
+  - [Ejecutar la Aplicación](#ejecutar-la-aplicación)
+- [Scripts](#scripts)
+- [Gestión de Datos y Estado](#gestión-de-datos-y-estado)
+- [API y Servicios Externos](#api-y-servicios-externos)
+- [Cartografía y GeoJSON](#cartografía-y-geojson)
+- [Utilidades y Constantes](#utilidades-y-constantes)
+- [Estilismo y Diseño](#estilismo-y-diseño)
+- [Persistencia / Caché de Datos](#persistencia--caché-de-datos)
 
 ## Objetivo del Proyecto
 
-Esta mini-aplicación está diseñada para explorar zonas de terreno, visualizar datos geográficos, configurar parámetros de optimización y simular la generación de edificios basándose en un "Nº de Catastro". Permite a los usuarios interactuar con información geográfica, definir restricciones de construcción, añadir puntos de interés y simular la ubicación óptima de edificios dentro de una zona determinada.
-
-## Características Principales
-
-* **Búsqueda de Zonas:** Los usuarios pueden introducir un "Nº de Catastro" para encontrar y acceder a zonas de terreno específicas.
-* **Visualización Geoespacial:** Muestra datos geográficos del terreno (GeoJSON) y características de edificios generados en un mapa interactivo de MapBox.
-* **Visualización de Información de Zona:** Muestra datos clave de la zona seleccionada, como el código catastral, el área total y el estado de procesamiento.
-* **Configuración de Optimización:** Proporciona controles para establecer parámetros para la generación de edificios, incluyendo:
-  * Límites de tamaño de las viviendas (ancho y alto mínimo/máximo, o dimensiones fijas).
-  * Rango para el número de viviendas.
-  * Número de bloques (viviendas).
-  * Distancia mínima adicional entre elementos.
-  * Tipología de edificio (ej. "bloquePlurifamiliar").
-* **Gestión de Puntos de Interés (POI):** Los usuarios pueden añadir puntos de interés personalizados en el mapa, asignarles nombres y posteriormente editarlos o eliminarlos.
-* **Generación de Simulación:** Activa un proceso de simulación basado en los parámetros configurados y navega para mostrar los resultados generados, incluyendo una lista de datos de edificios individuales (área, plantas, beneficio estimado).
-* **Caché del Lado del Cliente:** Implementa un mecanismo de caché para las respuestas de la API con un tiempo de expiración de 1 hora y revalidación.
+El objetivo principal de esta aplicación es mostrar planos completos de áreas de camping con características interactivas para la navegación, información detallada de zonas y direcciones dentro del área de camping.
 
 ## Pila Tecnológica
 
-* **Framework Principal:** Next.js
-* **Lenguaje:** JavaScript ES6+ (archivos `.js` y `.jsx`)
-* **Estilos:** Tailwind CSS
-* **Cartografía:** MapBox (integrado a través de un componente personalizado)
-* **Gestión de Estado:** React Hooks (`useState`, `useEffect`)
-* **Enrutamiento:** Next.js Router (`useRouter`, `useSearchParams`)
-* **Componentes UI:** Componentes personalizados para sliders, etiquetas, spinners, etc.
+- **Framework Principal:** Next.js
+- **Lenguaje:** JavaScript ES6+ (archivos `.js` y `.jsx`)
+- **Cartografía:** `react-map-gl`, `mapbox-gl`
+- **Componentes de UI:** `shadcn/ui` (ej., `Button`, `Switch`, `Spinner`, `Drawer`, `Sidebar`)
+- **Optimización de Imágenes:** `next/image`
+- **Hooks Personalizados:** `useFetchDirections`
+- **Estilismo:** Tailwind CSS
 
-## Cómo Empezar
+## Características Principales
 
-Siga estas instrucciones para configurar y ejecutar el proyecto localmente.
+- Muestra mapas detallados de campings con varias áreas (parcelas de camping, restaurantes, WCs, zonas deportivas, piscinas, recepción, aparcamientos, parques infantiles, zonas pet-friendly, bungalows) resaltadas con los iconos correspondientes.
+- Los usuarios pueden seleccionar áreas en el mapa para ver información más detallada.
+- Proporciona funcionalidad de navegación, permitiendo a los usuarios seleccionar puntos de origen y destino directamente en el mapa para obtener direcciones paso a paso.
+
+## Estructura del Proyecto
+
+El proyecto sigue una estructura estándar de Next.js con directorios dedicados para:
+
+- `src/app`: Rutas y páginas de la aplicación.
+- `src/components`: Componentes de UI reutilizables.
+- `src/services`: Llamadas a la API y lógica de obtención de datos.
+- `src/lib`: Funciones de utilidad y constantes de la aplicación.
+
+## Primeros Pasos
+
+Sigue estas instrucciones para configurar y ejecutar el proyecto localmente.
 
 ### Prerrequisitos
 
- Node.js (se recomienda la versión LTS)
-
-* npm o Yarn
-* **Archivo `.env`:**
-    Cree un archivo `.env` en la raíz del proyecto con las siguientes variables:
-
-    ```
-    NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN="YOUR_API_KEY_HERE"                                                                                                                                                                            
-    NEXT_PUBLIC_MAPBOX_STYLE="mapbox://styles/mapbox/satellite-v9"                                                                                                                                                                 
-    ```
-
-    Reemplace `"YOUR_API_KEY_HERE"` con su token de acceso de Mapbox. Se necesita registración GRATUITA para la demo.
+- Node.js (v18.x o superior recomendado)
+- npm o yarn
 
 ### Instalación
 
-1. **Clonar el repositorio:**
+1. Clona el repositorio:
 
     ```bash
-    git clone <url-de-tu-repositorio>
-    cd <directorio-de-tu-proyecto>
+    git clone <url-del-repositorio>
+    cd <nombre-del-repositorio>
     ```
 
-2. **Instalar dependencias:**
+2. Instala las dependencias:
 
     ```bash
     npm install
@@ -65,68 +75,64 @@ Siga estas instrucciones para configurar y ejecutar el proyecto localmente.
     yarn install
     ```
 
-### Ejecutar la Aplicación en Modo desarrollo
+3. Configura las Variables de Entorno:
+    Crea un archivo `.env.local` en la raíz del proyecto y añade tu Token de Acceso de Mapbox y la URL del Estilo de Mapbox:
 
-Para ejecutar la aplicación en modo de desarrollo:
+    ```dotenv
+    NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=TU_MAPBOX_ACCESS_TOKEN
+    NEXT_PUBLIC_MAPBOX_STYLE=mapbox://styles/mapbox/streets-v11 # O tu URL de estilo preferida
+    ```
+
+    Reemplaza `TU_MAPBOX_ACCESS_TOKEN` con tu token de acceso público real de Mapbox.
+
+### Ejecutar la Aplicación
+
+Para ejecutar la aplicación en modo desarrollo:
 
 ```bash
-npm run dev
+npm run START
 # o
-yarn dev
+yarn START
 ```
 
-Esto iniciará el servidor de desarrollo de Next.js, típicamente accesible en `http://localhost:3000`.
+Abre tu navegador y navega a `http://localhost:3000/zones/132` (asumiendo que `132` es un `zoneId` válido en tus mocks de datos).
 
 ## Scripts
 
-El `package.json` incluye los siguientes scripts:
+El archivo `package.json` incluye los siguientes scripts:
 
-* `start`: Ejecuta la aplicación en modo de desarrollo.
-* `build`: Compila la aplicación para producción.
-* `test`: Ejecuta las pruebas del proyecto (implementación pendiente si aún no está configurado).
-* `lint`: Verifica el estilo del código y posibles problemas usando ESLint.
-
-## Estructura del Proyecto
-
-El código principal de la aplicación reside en el directorio `src/app`, siguiendo las convenciones de enrutamiento de Next.js.
-
-```
-.
-├── src
-│   └── app
-│       ├── page.js           # Página de inicio para la entrada del código catastral
-│       └── zones
-│           └── [zoneId]
-│               └── page.js   # Página específica de zona con mapa y configuración
-├── components                # Componentes UI reutilizables
-├── public                    # Activos estáticos (iconos, mocks)
-│   └── icons
-│   └── mocks                 # Datos mock de la API
-├── services                  # Integraciones de servicios API
-└── ...
-```
-
-## Vistas
-
-* **Página de Inicio (`/`):** Una página de aterrizaje donde los usuarios pueden introducir un "Nº de Catastro" para comenzar.
-* **Página de Detalles de Zona (`/zones/[zoneId]`):** Muestra un mapa interactivo de la zona seleccionada, información de la zona, opciones de configuración de optimización, gestión de puntos de interés y resultados de la simulación.
-
-## Componentes
-
-* **`NavBar`:** Barra de navegación superior, visible en las vistas relevantes.
-* **`MapBox`:** Un componente de mapa interactivo que muestra el terreno, características de los edificios y puntos de interés.
-* **`Spinner`:** Un componente indicador de carga.
-* **`Label`:** Un componente de etiqueta con estilo.
-* **`Slider`:** Un componente de slider de rango para establecer límites numéricos.
+- `npm run START`: Ejecuta la aplicación en modo desarrollo.
+- `npm run BUILD`: Compila la aplicación para producción.
+- `npm run TEST`: Ejecuta las pruebas del proyecto. (Actualmente no implementado en el contexto proporcionado)
+- `npm run LINT`: Verifica el estilo del código y posibles problemas usando ESLint.
 
 ## Gestión de Datos y Estado
 
-La aplicación utiliza la gestión de estado del lado del cliente con React Hooks. Los datos se obtienen de puntos finales de la API simulados (definidos en `services/terrainService.js`) que simulan diferentes etapas de procesamiento del terreno y resultados del modelo.
+- **Estado Local:** Se utilizan `useState` y `useEffect` para gestionar el estado de la UI específico del componente y manejar los efectos secundarios.
+- **Memorización:** Se emplean `useCallback` y `useMemo` para optimizar el rendimiento de los manejadores de eventos y los cálculos costosos.
+- **Capa de Servicio:** Las llamadas a la API y la lógica de obtención de datos se encapsulan en archivos dedicados dentro del directorio `src/services`. Para la Prueba de Concepto (POC), los datos se recuperan de archivos GeoJSON de mock, simulando una API.
 
-## Estilo y Diseño
+## API y Servicios Externos
 
-La aplicación utiliza Tailwind CSS para el estilo, asegurando un diseño consistente y responsivo.
+- **API de Mapbox:** Las interacciones con la API de Direcciones de Mapbox se gestionan en `src/services/directionsService.js`.
+- **Variables de Entorno:** Los secretos accesibles desde el lado del cliente (como los tokens de acceso de Mapbox) se gestionan utilizando variables de entorno prefijadas con `NEXT_PUBLIC_`.
+- **Manejo de Errores:** Las funciones del servicio de API incluyen un manejo de errores robusto, generalmente registrando errores con `console.error` y devolviendo `null` o lanzando errores específicos.
 
-## Linting
+## Cartografía y GeoJSON
 
-ESLint está configurado para mantener un estilo de código consistente e identificar posibles problemas. Se puede ejecutar usando el comando `npm run lint` o `yarn lint`.
+- **Datos GeoJSON:** La obtención y el procesamiento de datos GeoJSON, incluyendo el cálculo de centroides y el filtrado de características, se gestionan en `src/services/terrainService.js`.
+- **Estado de la Característica de Mapbox:** Se utiliza el mecanismo `feature-state` de Mapbox para el estilismo dinámico de las capas de mapas interactivas (ej., resaltando las áreas seleccionadas al hacer clic).
+- **Capas Interactivas:** Se definen explícitamente los IDs de las capas interactivas en `interactiveLayerIds` para permitir las interacciones de clic en las características del mapa.
+- **Popups:** Se utilizan los componentes `Popup` de Mapbox para mostrar información relacionada con características específicas del mapa al pasar el ratón por encima o seleccionarlas.
+
+## Utilidades y Constantes
+
+El directorio `src/lib` almacena funciones de utilidad de toda la aplicación (ej., `handleMapClickLogic`) y constantes (ej., `comfortSpecificFeatures`, `directionTranslations`, `maneuverIconMap`) para una mejor organización y reutilización.
+
+## Estilismo y Diseño
+
+El estilismo de la aplicación se implementa utilizando clases de Tailwind CSS. El diseño sigue la estructura implícita en las descripciones de las vistas, asegurando un diseño consistente y responsivo.
+
+## Persistencia / Caché de Datos
+
+Se implementa un mecanismo de caché del lado del cliente para las respuestas de la API. Los datos obtenidos se almacenan con un tiempo de caducidad de 1 hora. Después de este período, los datos cacheados se consideran obsoletos y se revalidan mediante una nueva solicitud a la API cuando se necesitan de nuevo. Cualquier método de almacenamiento del lado del cliente adecuado (ej., `localStorage`, `sessionStorage` o una implementación de caché en memoria dentro del estado de la aplicación) puede utilizarse para este propósito.
