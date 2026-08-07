@@ -2,3 +2,8 @@ frontend/directions_dev_checklist.md
 frontend/CHECKLIST.md
 login_ssh.sh
 frontend/CONVENTIONS.md
+frontend/src/services/directionsService.js
+.aider.chat.history.md
+.aider.input.history
+frontend/readme_draft.md
+frontend/testing_checklist.md
