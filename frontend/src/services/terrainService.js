@@ -57,10 +57,8 @@ export async function fetchTerrainGeoJson(registryCode, dataType = 'processed') 
         if (data && Array.isArray(data.features)) {
             campingAreas = data.features.filter(feature => feature.properties.area === 'camping');
             campingAreas.forEach(feature => {
-                if (feature.geometry && feature.geometry.type === 'Polygon') {
-                    const centroid = calculatePolygonCentroid(feature.geometry);
-                    Object.assign(feature.properties, { centroid_lon: centroid.longitude, centroid_lat: centroid.latitude });
-                }
+                const centroid = calculatePolygonCentroid(feature.geometry);
+                Object.assign(feature.properties, { centroid_lon: centroid.longitude, centroid_lat: centroid.latitude });
             });
             const processedFeatures = data.features.map(feature => {
                 // Only calculate centroid if it's a Polygon and has geometry                                                                                                                                                 
