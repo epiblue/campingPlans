@@ -1,5 +1,21 @@
 =======
 
+# Contenido de presentación
+
+### Video
+
+<https://youtu.be/_Qh11Tc2-8w>
+
+### Presentación en slides
+
+<https://docs.google.com/presentation/d/1GC3sn5sCrSza33B3Hv8aL_xvh6_82irzQkHbDFEk4Dc/edit?usp=sharing>
+
+### Aplicación desplegada
+
+<https://camping-plans.vercel.app/>
+
+=======
+
 # Navegador de Mapas de Campings
 
 Este proyecto es una aplicación web construida con Next.js, diseñada para visualizar planos detallados de áreas de camping. Ofrece funcionalidades interactivas
