@@ -20,7 +20,6 @@ export async function getDirections(origin, destination, profile = 'walking') {
       throw new Error(`Mapbox Directions API error: ${response.status} ${response.statusText} - ${errorData.message}`);
     }
     const data = await response.json();
-    console.log('Directions api response data: ', data);
     return data;
   } catch (error) {
     console.error("Error fetching directions:", error);

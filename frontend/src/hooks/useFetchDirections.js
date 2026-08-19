@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { getDirections } from '@/services/directionsService';
 
 export const useFetchDirections = (origin, destination, setRouteDataProp, setIsLoading) => {
@@ -11,7 +11,6 @@ export const useFetchDirections = (origin, destination, setRouteDataProp, setIsL
                     const directions = await getDirections(origin, destination, profile);
 
                     if (directions && directions.routes && directions.routes.length > 0) {
-                        // Store the full route object, not just its geometry                                                                                                                                                                    
                         setRouteDataProp(directions.routes[0]);
                     } else {
                         setRouteDataProp(null);
@@ -24,7 +23,6 @@ export const useFetchDirections = (origin, destination, setRouteDataProp, setIsL
                     setIsLoading(false);
                 }
             } else {
-                // Clear route if origin or destination is missing                                                                                                                                                                               
                 setRouteDataProp(null);
             }
         };

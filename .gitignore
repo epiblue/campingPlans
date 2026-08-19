@@ -7,3 +7,5 @@ frontend/src/services/directionsService.js
 .aider.input.history
 frontend/readme_draft.md
 frontend/testing_checklist.md
+/node_modules/
+*/dev_*.md

@@ -6,16 +6,6 @@ import { Spinner } from "@/components/ui/spinner"
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
-import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
@@ -123,7 +113,7 @@ export default function ZonePage({ params }) {
     console.log('Zone Data', zoneData);
     console.log('Zone Name', zoneName);
 
-    const [selectedFeature, setSelectedFeature] = useState(null); // Added selectedFeature state                                                                                                                                  
+    const [selectedFeature, setSelectedFeature] = useState(null);
     const mapRef = useRef();
 
     const interactiveLayerIds = [
@@ -141,10 +131,10 @@ export default function ZonePage({ params }) {
 
     const handlePlanRouteStart = () => {
         setIsSelectingWaypoints(true);
-        setOriginCoords(null);          // Reset origin                                                                                                                                                                                          
-        setDestinationCoords(null);     // Reset destination                                                                                                                                                                                     
-        setRouteData(null);             // Clear previous route                                                                                                                                                                                  
-        setSelectedFeature(null);       // Clear any currently selected map feature                                                                                                                                                              
+        setOriginCoords(null);
+        setDestinationCoords(null);
+        setRouteData(null);
+        setSelectedFeature(null);
         if (mapRef.current && selectedFeature) {
             mapRef.current.setFeatureState({ source: selectedFeature.source, id: selectedFeature.id }, { selected: false });
         }
@@ -159,7 +149,6 @@ export default function ZonePage({ params }) {
         console.log("Cleared route and stopped waypoint selection.");
     };
 
-    // Wrapper for the utility function, ensuring correct dependencies for useCallback                                                                                                                                            
     const handleMapClick = useCallback((e) => {
         if (isSelectingWaypoints) {
             let waypointModeToPass = null;
@@ -173,22 +162,18 @@ export default function ZonePage({ params }) {
                 handleMapClickLogic(
                     e,
                     mapRef,
-                    null, // No feature selection when in waypoint mode                                                                                                                                                                          
-                    () => { }, // No setSelectedFeature when in waypoint mode                                                                                                                                                                     
-                    [], // No interactive layers needed for waypoint selection in this specific call                                                                                                                                             
+                    null,
+                    () => { },
+                    [],
                     waypointModeToPass,
-                    setOriginCoords, // Pass parent's setOrigin state setter                                                                                                                                                                     
-                    setDestinationCoords // Pass parent's setDestination state setter                                                                                                                                                            
+                    setOriginCoords,
+                    setDestinationCoords
                 );
-                // No immediate state change here for isSelectingWaypoints or waypointModeToPass.                                                                                                                                                
-                // The re-evaluation of dependencies (originCoords, destinationCoords) for the next click                                                                                                                                        
-                // will correctly determine the next step in waypoint selection.                                                                                                                                                                 
             } else {
                 console.log("Both origin and destination already selected. Deactivating waypoint selection.");
-                setIsSelectingWaypoints(false); // Auto-deactivate after both are set                                                                                                                                                            
+                setIsSelectingWaypoints(false);
             }
         } else {
-            // Original feature selection logic                                                                                                                                                                                                  
             handleMapClickLogic(e, mapRef, selectedFeature, setSelectedFeature, interactiveLayerIds);
         }
     }, [
@@ -197,8 +182,8 @@ export default function ZonePage({ params }) {
         setSelectedFeature,
         interactiveLayerIds,
         isSelectingWaypoints,
-        originCoords, // Dependency for sequential waypoint selection logic                                                                                                                                                                      
-        destinationCoords, // Dependency for sequential waypoint selection logic                                                                                                                                                                 
+        originCoords,
+        destinationCoords,
         setOriginCoords,
         setDestinationCoords
     ]);
@@ -236,8 +221,8 @@ export default function ZonePage({ params }) {
                                                         src={`/icons/${area.icon}.svg`}
                                                         alt={area.label}
                                                         className="size-4 invert"
-                                                        width={16} // Added required width prop
-                                                        height={16} // Added required height prop
+                                                        width={16}
+                                                        height={16}
                                                     />
                                                     <span>{area.label}</span>
                                                 </div>
@@ -372,12 +357,12 @@ export default function ZonePage({ params }) {
                                     handleMapClick={handleMapClick}
                                     interactiveLayerIds={interactiveLayerIds}
                                     bungalows={zoneData.bungalows}
-                                    origin={originCoords} // Pass origin state to MapBox                                                                                                                                                                 
-                                    destination={destinationCoords} // Pass destination state to MapBox                                                                                                                                                  
-                                    setOrigin={setOriginCoords} // Pass parent's setter to MapBox                                                                                                                                                        
-                                    setDestination={setDestinationCoords} // Pass parent's setter to MapBox                                                                                                                                              
-                                    routeData={routeData} // Pass routeData to MapBox                                                                                                                                                                    
-                                    setRouteData={setRouteData} // Pass setRouteData to MapBox so it can clear it  
+                                    origin={originCoords}
+                                    destination={destinationCoords}
+                                    setOrigin={setOriginCoords}
+                                    setDestination={setDestinationCoords}
+                                    routeData={routeData}
+                                    setRouteData={setRouteData}
                                 />
                                 <div className={`absolute inset-x-0 bottom-0 bg-white shadow-lg transition-transform duration-300 ease-out                                                                                                   
                                                   ${selectedFeature ? 'translate-y-0' : 'translate-y-full'}                                                                                                                                      

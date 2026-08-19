@@ -119,7 +119,6 @@ const MapBox = ({
                 ref={mapRef}
                 onClick={handleMapClick}
                 interactiveLayerIds={interactiveLayerIds}
-            // onClick={handleMapClick}
 
             >
                 <FullscreenControl position="top-left" />
@@ -163,14 +162,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -219,14 +218,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -275,14 +274,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -332,14 +331,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -389,14 +388,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -446,14 +445,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -503,14 +502,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -560,14 +559,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -616,14 +615,14 @@ const MapBox = ({
                                 'fill-color': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    '#FFFF00', // Color when selected                                                                                                                                                     
-                                    ['get', 'fill'] // Original color from properties                                                                                                                                     
+                                    '#FFFF00',
+                                    ['get', 'fill']
                                 ],
                                 'fill-opacity': [
                                     'case',
                                     ['boolean', ['feature-state', 'selected'], false],
-                                    0.8, // Opacity when selected                                                                                                                                                         
-                                    0.7 // Original opacity                                                                                                                                                               
+                                    0.8,
+                                    0.7
                                 ]
                             }}
                             interactive={true}
@@ -670,10 +669,10 @@ const MapBox = ({
                             minzoom={17}
                             type="fill-extrusion"
                             paint={{
-                                'fill-extrusion-color': '#d1d5dc', // Static color (example, choose one that fits)                                                                                                         
-                                'fill-extrusion-height': 3,       // Static height                                                                                                                                        
-                                'fill-extrusion-base': 0,         // Static base height                                                                                                                                   
-                                'fill-extrusion-opacity': 1      // Static opacity                                                                                                                                       
+                                'fill-extrusion-color': '#d1d5dc',
+                                'fill-extrusion-height': 3,
+                                'fill-extrusion-base': 0,
+                                'fill-extrusion-opacity': 1
                             }}
                             interactive={true}
                         />

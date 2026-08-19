@@ -20,12 +20,7 @@ export default function HomePage() {
     setErrorTerrain(null);
     try {
       const { rawGeoJson, campingAreas } = await fetchTerrainGeoJson(registryCode, 'processed');
-
-      console.log("rawGeoJson", rawGeoJson);
-      console.log("camping areas", campingAreas);
-
       if (campingAreas) {
-        //const catastroCode = terrainFeatures[0].properties.catastro;                                                                                           
         router.push(`/zones/camping_las_dunas`);
       } else {
         throw new Error("Catastro code not found in terrain data.");
@@ -46,9 +41,9 @@ export default function HomePage() {
       <form onSubmit={handleFetchTerrain} className="max-w-md mx-auto w-full">
         <label htmlFor="search" className="block mb-2.5 text-sm font-medium text-gray-700 sr-only">Search</label>
         <div
-          id="camping-las-dunas-selection" // Un ID único para el div                                                                                            
+          id="camping-las-dunas-selection"
           className="block w-full p-3 ps-9 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg shadow-sm cursor-pointer hover:bg-gray-100         
-focus:ring-blue-500 focus:border-blue-500" // Se mantienen la mayoría de los estilos del input original, añadiendo cursor-pointer y hover                        
+focus:ring-blue-500 focus:border-blue-500"
           onClick={() => router.push(`/zones/camping_las_dunas`)}
         >
           Camping Las Dunas

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getDirections } from './directionsService'; // Adjusted path for same directory                                                                           
+import { getDirections } from './directionsService';
 
 describe('directionsService', () => {
     const mockOrigin = [10.0, 20.0];

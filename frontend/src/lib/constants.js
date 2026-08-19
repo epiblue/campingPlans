@@ -49,18 +49,12 @@ export const directionTranslations = {
 };
 
 export const directionTranslationPatterns = [
-    // Example: "Turn left onto K33." -> "Girar a la izquierda en K33."                                                                                                                                                                         
-    // This pattern matches "Turn [direction] onto [road name]."                                                                                                                                                                                
     { pattern: /^Turn (left|right|sharp left|sharp right) onto (.+)\.$/, translation: "Girar $1 en $2." },
-    // Add more patterns as needed                                                                                                                                                                                                              
 ];
 
 export const maneuverIconMap = {
-    // Maneuver types                                                                                                                                                                                                                           
-    'arrive': 'flag_check', // Icon for arrival                                                                                                                                                                                                       
-    'depart': 'directions_walk', // Icon for departure                                                                                                                                                                                              
-
-    // Maneuver modifiers                                                                                                                                                                                                                       
+    'arrive': 'flag_check',
+    'depart': 'directions_walk',
     'left': 'turn_left',
     'right': 'turn_right',
     'sharp left': 'turn_sharp_left',
@@ -68,7 +62,5 @@ export const maneuverIconMap = {
     'slight left': 'turn_slight_left',
     'slight right': 'turn_slight_right',
     'uturn': 'turn-uturn',
-
-    // Default icon if a specific one is not found                                                                                                                                                                                              
     'default': 'road',
 };  

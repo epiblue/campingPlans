@@ -25,7 +25,6 @@ export async function fetchTerrainGeoJson(registryCode, dataType = 'processed') 
     try {
         let url;
         if (dataType === 'results') {
-            //url = '/mocks/model-results_limit_houses.json';
             url = '/mocks/camping_las_dunas.geojson';
         } else if (dataType === 'limit-size') {
             url = '/mocks/model_results_limit_size.json';
@@ -61,10 +60,8 @@ export async function fetchTerrainGeoJson(registryCode, dataType = 'processed') 
                 Object.assign(feature.properties, { centroid_lon: centroid.longitude, centroid_lat: centroid.latitude });
             });
             const processedFeatures = data.features.map(feature => {
-                // Only calculate centroid if it's a Polygon and has geometry                                                                                                                                                 
                 if (feature.geometry && feature.geometry.type === 'Polygon') {
                     const centroid = calculatePolygonCentroid(feature.geometry);
-                    // Return a new feature object with updated properties to maintain immutability                                                                                                                           
                     return {
                         ...feature,
                         properties: {
@@ -74,7 +71,7 @@ export async function fetchTerrainGeoJson(registryCode, dataType = 'processed') 
                         }
                     };
                 }
-                return feature; // Return feature as is if not a Polygon or no geometry                                                                                                                                       
+                return feature;
             });
 
             zoneRestaurants = processedFeatures.filter(feature => feature.properties.area === 'restaurant');
